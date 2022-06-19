@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,15 +26,18 @@ class MainActivity : AppCompatActivity() {
         timeLeftTextView = findViewById(R.id.time_left_text_view)
         tapMeButton = findViewById(R.id.tap_me_button)
         tapMeButton.setOnClickListener { incrementScore()
-        resetGame()
+            if (!gameStarted){
+                startGame()
+            }
         }
+        resetGame()
     }
 
     private fun incrementScore(){
         score++
-
         val newScore = getString(R.string.your_score, score)
         gameScoreTextView.text = newScore
+
     }
 
     private fun resetGame(){
@@ -45,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         val initialTimeLeft = getString(R.string.time_left, 60)
         timeLeftTextView.text = initialTimeLeft
         countDownTimer = object : CountDownTimer(initialCountDown,countDownInterval){
+
             override fun onTick(millisUntilFinished: Long) {
                 timeLeft = millisUntilFinished.toInt() / 1000
 
@@ -53,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                TODO("Not yet implemented")
+                endGame()
             }
         }
 
@@ -61,10 +66,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGame(){
-
+        countDownTimer.start()
+        gameStarted = true
     }
 
     private fun endGame(){
-
+        Toast.makeText(this, getString(R.string.game_over_message,score), Toast.LENGTH_LONG).show()
+        resetGame()
     }
 }
